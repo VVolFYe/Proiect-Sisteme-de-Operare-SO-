@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <string.h>
+#include <fcntl.h>
 
 // -1 error, 1 manager, 2 inspector 
 int getRole(char **args){
@@ -84,8 +85,37 @@ void add(char **args){
     char path[256];
     strcpy(path, "./");
     strcat(path, FolderName);
-    mkdir(path, 0)
+    if (mkdir(path, 0750) == -1){
+        fprintf(stderr, "Error creating directory...");
+        exit(-1);
+    }
 
+    //PENTU CREARE:
+    int fd = -1;
+
+    // reports.dat
+    strcpy(path, "./");
+    strcat(path, FolderName);
+    strcat(path, "/reports.dat");
+    fd = open(path,O_CREAT | O_RDWR, 0664);
+    if (fd == -1) perror("open reports.dat");
+    else close(fd);
+
+    // district.cfg
+    strcpy(path, "./");
+    strcat(path, FolderName);
+    strcat(path, "/district.cfg");
+    fd = open(path,O_CREAT | O_RDWR,0640);
+    if (fd == -1) perror("open district.cfg");
+    else close(fd);
+
+    // logged_district
+    strcpy(path, "./");
+    strcat(path, FolderName);
+    strcat(path, "/logged_district");
+    fd = open(path,O_CREAT | O_RDWR,0644);
+    if (fd == -1) perror("open logged_district");
+    else close(fd);
 
 }
 
