@@ -4,5 +4,7 @@
 int getRole(char **args);
 void displayRole(char **args);
 int commandSelector(char **args);
+char *getUser(char **args);
+
 
 #endif

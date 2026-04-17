@@ -41,7 +41,7 @@ void selectCommand(char **args){
 }
 
 int main(int argc, char **argv){
-    if (argc < 4){
+    if (argc < 6){
         fprintf(stderr, "Not enough command line arguments.\n");
         fprintf(stderr, "2nd argument: --role\n3rd argument: Role Name\n4th argument: Command\n");
         exit(-1);

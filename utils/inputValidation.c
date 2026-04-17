@@ -25,6 +25,10 @@ int getRole(char **args){
     return -1; //must be other ot some error
 }
 
+char *getUser(char **args){
+    return args[4];
+}
+
 void displayRole(char **args){
     int roleNumber = getRole(args);
     switch(roleNumber){
