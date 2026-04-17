@@ -6,6 +6,22 @@
 #include <dirent.h>
 #include "inputValidation.h"
 
+void checkInput(char **args){
+    if (strcmp(args[1], "--role") != 0){
+        fprintf(stderr, "2nd argument must be: --role");
+        exit(-1);
+    }
+    if (strcmp(args[3], "--user") != 0){
+        fprintf(stderr, "2nd argument must be: --role");
+        exit(-1);
+    }
+    if (strlen(args[5]) > 63){
+        fprintf(stderr, "username too long.\n");
+        exit(-1);
+    }
+}
+
+
 // -1 error, 1 manager, 2 inspector 
 int getRole(char **args){
     if (strcmp(args[1], "--role") != 0){
