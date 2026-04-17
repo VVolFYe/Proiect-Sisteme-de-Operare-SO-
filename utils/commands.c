@@ -25,8 +25,11 @@ void add(char **args){
     strcat(path, FolderName);
 
     if (dirExists(path)) {
+        //file exists
         fprintf(stderr, "File already exists.\nWe have to append the input. Work in progress...\n");
     } else {
+        //file doesn't exists
+
         fprintf(stderr, "Creating file...\n");
 
         if (mkdir(path, 0750) == -1){
