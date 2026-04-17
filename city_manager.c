@@ -11,6 +11,35 @@
 #include "utils/fileFunctions.h"
 #include "utils/commands.h"
 
+void selectCommand(char **args){
+    int selected = commandSelector(args);
+    switch (selected){
+        case 1:
+            add(args);
+            break;
+        case 2:
+            list(args);
+            break;
+        case 3:
+            view(args);
+            break;
+        case 4:
+            remove_report(args);
+            break;
+        case 5:
+            update_threshold(args);
+            break;
+        case 6:
+            filter(args);
+            break;
+
+        default:
+        fprintf(stderr, "Unknown Command. Exiting...\n");
+        exit(-1);
+            
+    }
+}
+
 int main(int argc, char **argv){
     if (argc < 4){
         fprintf(stderr, "Not enough command line arguments.\n");

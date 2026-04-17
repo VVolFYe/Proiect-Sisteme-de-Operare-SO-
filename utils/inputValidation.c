@@ -6,7 +6,6 @@
 #include <dirent.h>
 #include "inputValidation.h"
 
-
 // -1 error, 1 manager, 2 inspector 
 int getRole(char **args){
     if (strcmp(args[1], "--role") != 0){
