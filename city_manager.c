@@ -7,80 +7,11 @@
 #include <string.h>
 #include <fcntl.h>
 #include <stdbool.h>
-
-
-// -1 error, 1 manager, 2 inspector 
-int getRole(char **args){
-    if (strcmp(args[1], "--role") != 0){
-        fprintf(stderr, "Second argument must be --role\n");
-        exit(-1);
-    }
-
-    if (strcmp(args[2], "manager") == 0){
-        return 1;
-    }
-
-    if (strcmp(args[2], "inspector") == 0){
-        return 2;
-    }
-
-    fprintf(stderr, "Unknown Role Name\n");
-    return -1; //must be other ot some error
-}
-
-void displayRole(char **args){
-    int roleNumber = getRole(args);
-    switch(roleNumber){
-        case 1:
-            printf("Current role = Manager\n"); break;
-        case 2:
-            printf("Current role = Inspector\n"); break;
-        default:
-            exit(-1);
-    }
-}
-
-
-/*
-    Command ID:
-    error = -1
-    add = 1
-    list = 2
-    view = 3
-    remove_report = 4 
-    update_threshold = 5 
-    filter = 6
-*/
-int commandSelector(char **args){
-    if (strcmp(args[3], "add") == 0){
-        return 1;
-    }
-    if (strcmp(args[3], "list") == 0){
-        return 2;
-    }
-    if (strcmp(args[3], "view") == 0){
-        return 3;
-    }
-    if (strcmp(args[3], "remove_report") == 0){
-        return 4;
-    }
-    if (strcmp(args[3], "update_threshold") == 0){
-        return 5;
-    }
-    if (strcmp(args[3], "filter") == 0){
-        return 6;
-    }
-    return -1;
-}
-
-//check if file exists
-bool fileExists(const char *path) {
-    struct stat st;
-    return (stat(path, &st) == 0 && S_ISREG(st.st_mode));
-}
+#include "utils/inputValidation.h"
+#include "utils/fileFunctions.h"
 
 void add(char **args){
-    fprintf(stderr, "!<add> FUNCTION: WORK IN PROGRESS!\n");
+    fprintf(stderr, "<add> FUNCTION: WORK IN PROGRESS!\n\n");
 
     // argv[4]
     char FolderName[64];
@@ -95,15 +26,19 @@ void add(char **args){
     char path[256];
     strcpy(path, "./");
     strcat(path, FolderName);
-    if (mkdir(path, 0750) == -1){
-        fprintf(stderr, "Error creating directory...");
-        exit(-1);
-    }
 
-    if (fileExists(path)) {
+    if (dirExists(path)) {
         fprintf(stderr, "File already exists.\nWe have to append the input. Work in progress...\n");
     } else {
         fprintf(stderr, "Creating file...\n");
+
+        char path[256];
+        strcpy(path, "./");
+        strcat(path, FolderName);
+        if (mkdir(path, 0750) == -1){
+            fprintf(stderr, "Error creating directory...");
+            exit(-1);
+        }
 
         //PENTU CREARE:
         int fd = -1;
