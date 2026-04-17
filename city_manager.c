@@ -6,6 +6,8 @@
 #include <dirent.h>
 #include <string.h>
 #include <fcntl.h>
+#include <stdbool.h>
+
 
 // -1 error, 1 manager, 2 inspector 
 int getRole(char **args){
@@ -33,6 +35,8 @@ void displayRole(char **args){
             printf("Current role = Manager\n"); break;
         case 2:
             printf("Current role = Inspector\n"); break;
+        default:
+            exit(-1);
     }
 }
 
@@ -69,6 +73,12 @@ int commandSelector(char **args){
     return -1;
 }
 
+//check if file exists
+bool fileExists(const char *path) {
+    struct stat st;
+    return (stat(path, &st) == 0 && S_ISREG(st.st_mode));
+}
+
 void add(char **args){
     fprintf(stderr, "!<add> FUNCTION: WORK IN PROGRESS!\n");
 
@@ -90,33 +100,38 @@ void add(char **args){
         exit(-1);
     }
 
-    //PENTU CREARE:
-    int fd = -1;
+    if (fileExists(path)) {
+        fprintf(stderr, "File already exists.\nWe have to append the input. Work in progress...\n");
+    } else {
+        fprintf(stderr, "Creating file...\n");
 
-    // reports.dat
-    strcpy(path, "./");
-    strcat(path, FolderName);
-    strcat(path, "/reports.dat");
-    fd = open(path,O_CREAT | O_RDWR, 0664);
-    if (fd == -1) perror("open reports.dat");
-    else close(fd);
+        //PENTU CREARE:
+        int fd = -1;
 
-    // district.cfg
-    strcpy(path, "./");
-    strcat(path, FolderName);
-    strcat(path, "/district.cfg");
-    fd = open(path,O_CREAT | O_RDWR,0640);
-    if (fd == -1) perror("open district.cfg");
-    else close(fd);
+        // reports.dat
+        strcpy(path, "./");
+        strcat(path, FolderName);
+        strcat(path, "/reports.dat");
+        fd = open(path,O_CREAT | O_RDWR, 0664);
+        if (fd == -1) perror("open reports.dat");
+        else close(fd);
 
-    // logged_district
-    strcpy(path, "./");
-    strcat(path, FolderName);
-    strcat(path, "/logged_district");
-    fd = open(path,O_CREAT | O_RDWR,0644);
-    if (fd == -1) perror("open logged_district");
-    else close(fd);
+        // district.cfg
+        strcpy(path, "./");
+        strcat(path, FolderName);
+        strcat(path, "/district.cfg");
+        fd = open(path,O_CREAT | O_RDWR,0640);
+        if (fd == -1) perror("open district.cfg");
+        else close(fd);
 
+        // logged_district
+        strcpy(path, "./");
+        strcat(path, FolderName);
+        strcat(path, "/logged_district");
+        fd = open(path,O_CREAT | O_RDWR,0644);
+        if (fd == -1) perror("open logged_district");
+        else close(fd);
+    }
 }
 
 void list(char **args){
