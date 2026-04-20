@@ -13,7 +13,7 @@ void checkInput(char **args){
     }
 
     if (strcmp(args[3], "--user") != 0){
-        fprintf(stderr, "2nd argument must be: --role");
+        fprintf(stderr, "3rd argument must be: --role");
         exit(-1);
     }
 

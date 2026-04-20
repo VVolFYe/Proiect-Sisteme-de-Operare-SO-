@@ -10,59 +10,24 @@
 void add(char **args){
     fprintf(stderr, "<add> FUNCTION: WORK IN PROGRESS!\n\n");
 
-    char FolderName[64];
-    if (strlen(args[6]) > 63){
+    char *district = args[6];
+
+    if (strlen(district) > 63){
         fprintf(stderr, "Directory Name too long!\n");
         fprintf(stderr, "Exiting...\n");
         exit(-1);
     }
 
-    strcpy(FolderName, args[6]);
-    printf("Folder Name = %s\n", FolderName);
+    checkDistrictExists(district);
 
-    char path[256];
-    strcpy(path, "./");
-    strcat(path, FolderName);
+    printf("District '%s' is ready.\n", district);
 
-    if (dirExists(path)) {
-        //file exists
-        fprintf(stderr, "File already exists.\nWe have to append the input. Work in progress...\n");
-    } else {
-        //file doesn't exists
+    char reportsPath[256];
+    buildReportsPath(reportsPath, sizeof(reportsPath), district);
 
-        fprintf(stderr, "Creating file...\n");
+    printf("Reports file path: %s\n", reportsPath);
 
-        if (mkdir(path, 0750) == -1){
-            fprintf(stderr, "Error creating directory...");
-            exit(-1);
-        }
-
-        int fd = -1;
-
-        strcpy(path, "./");
-        strcat(path, FolderName);
-        strcat(path, "/reports.dat");
-        fd = open(path, O_CREAT | O_RDWR, 0664);
-        chmod(path, 0664);
-        if (fd == -1) perror("open reports.dat");
-        else close(fd);
-
-        strcpy(path, "./");
-        strcat(path, FolderName);
-        strcat(path, "/district.cfg");
-        fd = open(path, O_CREAT | O_RDWR, 0640);
-        chmod(path, 0640);
-        if (fd == -1) perror("open district.cfg");
-        else close(fd);
-
-        strcpy(path, "./");
-        strcat(path, FolderName);
-        strcat(path, "/logged_district");
-        fd = open(path, O_CREAT | O_RDWR, 0644);
-        chmod(path, 0644);
-        if (fd == -1) perror("open logged_district");
-        else close(fd);
-    }
+    // next step: append binary report here
 }
 
 void list(char **args){
