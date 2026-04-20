@@ -11,13 +11,13 @@ void add(char **args){
     fprintf(stderr, "<add> FUNCTION: WORK IN PROGRESS!\n\n");
 
     char FolderName[64];
-    if (strlen(args[4]) > 63){
+    if (strlen(args[6]) > 63){
         fprintf(stderr, "Directory Name too long!\n");
         fprintf(stderr, "Exiting...\n");
         exit(-1);
     }
 
-    strcpy(FolderName, args[4]);
+    strcpy(FolderName, args[6]);
     printf("Folder Name = %s\n", FolderName);
 
     char path[256];

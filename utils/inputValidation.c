@@ -15,7 +15,7 @@ void checkInput(char **args){
         fprintf(stderr, "2nd argument must be: --role");
         exit(-1);
     }
-    if (strlen(args[5]) > 63){
+    if (strlen(args[4]) > 63){
         fprintf(stderr, "username too long.\n");
         exit(-1);
     }
@@ -69,22 +69,22 @@ void displayRole(char **args){
     filter = 6
 */
 int commandSelector(char **args){
-    if (strcmp(args[5], "add") == 0){
+    if (strcmp(args[5], "--add") == 0){
         return 1;
     }
-    if (strcmp(args[5], "list") == 0){
+    if (strcmp(args[5], "--list") == 0){
         return 2;
     }
-    if (strcmp(args[5], "view") == 0){
+    if (strcmp(args[5], "--view") == 0){
         return 3;
     }
-    if (strcmp(args[5], "remove_report") == 0){
+    if (strcmp(args[5], "--remove_report") == 0){
         return 4;
     }
-    if (strcmp(args[5], "update_threshold") == 0){
+    if (strcmp(args[5], "--update_threshold") == 0){
         return 5;
     }
-    if (strcmp(args[5], "filter") == 0){
+    if (strcmp(args[5], "--filter") == 0){
         return 6;
     }
     return -1;
