@@ -43,6 +43,7 @@ void add(char **args){
         strcat(path, FolderName);
         strcat(path, "/reports.dat");
         fd = open(path, O_CREAT | O_RDWR, 0664);
+        chmod(path, 0664);
         if (fd == -1) perror("open reports.dat");
         else close(fd);
 
@@ -50,6 +51,7 @@ void add(char **args){
         strcat(path, FolderName);
         strcat(path, "/district.cfg");
         fd = open(path, O_CREAT | O_RDWR, 0640);
+        chmod(path, 0640);
         if (fd == -1) perror("open district.cfg");
         else close(fd);
 
@@ -57,6 +59,7 @@ void add(char **args){
         strcat(path, FolderName);
         strcat(path, "/logged_district");
         fd = open(path, O_CREAT | O_RDWR, 0644);
+        chmod(path, 0644);
         if (fd == -1) perror("open logged_district");
         else close(fd);
     }
