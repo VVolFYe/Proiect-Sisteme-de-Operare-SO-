@@ -111,6 +111,6 @@ void checkDistrictExists(const char *district) {
     }
     chmod(logPath, 0644);
 
-    //here we just checked if they existed already and then created them
+    //here we just checked if they existed already and then created them if needed
 }
 

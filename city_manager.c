@@ -50,7 +50,10 @@ int main(int argc, char **argv){
     checkInput(argv);
 
     // printf("Current Role = %d\n", getRole(argv));
-    displayRole(argv);
+    // displayRole(argv);
+    
+    checkPermissions(argv);
+
     printf("\n");
     selectCommand(argv);
 

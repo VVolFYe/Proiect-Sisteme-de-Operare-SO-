@@ -39,7 +39,6 @@ int getRole(char **args){
         return 2;
     }
 
-    fprintf(stderr, "Unknown Role Name\n");
     return -1; //must be other ot some error
 }
 
@@ -90,4 +89,22 @@ int commandSelector(char **args){
         return 6;
     }
     return -1;
+}
+
+void checkPermissions(char **args){
+    // int currentAction = commandSelector(args); //for switch case to check for permissions later.
+
+    char role[64];
+    strcpy(role, args[2]); //inspector || manager
+
+    if (strcmp(role, "manager") == 0){
+        //I think he can do anything as far as I'm concerned. Maybe we update later idk.
+    }
+    else if (strcmp(role, "inspector") == 0){
+        //Here i will have to check for restrictions. I will come back to it when time comes.
+    }
+    else{
+        fprintf(stderr, "Unknown role. The roles can only be <Inspector> or <Manager>\n");
+        exit(-1); //for the moment, all functions require a role. So, for now, I use exit(-1).
+    }
 }
