@@ -20,12 +20,12 @@ void add(char **args){
 
     checkDistrictExists(district);
 
-    printf("District '%s' is ready.\n", district);
+    printf("District <%s> was created.\n", district); //it was for debugging but i will leave it here for now. maybe remove later
 
     char reportsPath[256];
     buildReportsPath(reportsPath, sizeof(reportsPath), district);
 
-    printf("Reports file path: %s\n", reportsPath);
+    printf("Your report was added. File path: %s\n", reportsPath); //this is for debugging so far but it looks nice tho.
 
     // next step: append binary report here
 }

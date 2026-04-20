@@ -20,12 +20,12 @@ bool dirExists(const char *path) {
 void appendToFile(const char *path, const char *text) {
     int fd = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (fd == -1) {
-        fprintf(stderr, "Error when writing in the file: %s (error 1)\n", path);
+        fprintf(stderr, "Error when writing in the file: %s (error 1 open)\n", path);
         exit(-1);
     }
 
     if (write(fd, text, strlen(text)) == -1) {
-        fprintf(stderr, "Error when writing in the file: %s (error 2)\n", path);
+        fprintf(stderr, "Error when writing in the file: %s (error 2 wirte)\n", path);
         close(fd);
         exit(-1);
     }
@@ -109,5 +109,7 @@ void checkDistrictExists(const char *district) {
         close(fd);
     }
     chmod(logPath, 0644);
+
+    //here we just checked if they existed already and then created them
 }
 
