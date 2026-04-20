@@ -20,8 +20,6 @@ void add(char **args){
 
     checkDistrictExists(district);
 
-    printf("District <%s> was created.\n", district); //it was for debugging but i will leave it here for now. maybe remove later
-
     char reportsPath[256];
     buildReportsPath(reportsPath, sizeof(reportsPath), district);
 

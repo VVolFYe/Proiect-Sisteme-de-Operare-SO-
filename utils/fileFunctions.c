@@ -66,6 +66,7 @@ void checkDistrictExists(const char *district) {
             perror("mkdir district");
             exit(-1);
         }
+        printf("District <%s> was created.\n", district); //it was for debugging but i will leave it here for now. maybe remove later
     }
 
     chmod(districtPath, 0750);
