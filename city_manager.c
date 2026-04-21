@@ -10,6 +10,7 @@
 #include "utils/inputValidation.h"
 #include "utils/fileFunctions.h"
 #include "utils/commands.h"
+#include "utils/report.h"
 
 void selectCommand(char **args){
     int selected = commandSelector(args);
