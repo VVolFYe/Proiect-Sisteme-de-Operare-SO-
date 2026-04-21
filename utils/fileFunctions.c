@@ -114,3 +114,18 @@ void checkDistrictExists(const char *district) {
     //here we just checked if they existed already and then created them if needed
 }
 
+void modeToString(mode_t mode, char *out) {
+    out[0] = (mode & S_IRUSR) ? 'r' : '-';
+    out[1] = (mode & S_IWUSR) ? 'w' : '-';
+    out[2] = (mode & S_IXUSR) ? 'x' : '-';
+
+    out[3] = (mode & S_IRGRP) ? 'r' : '-';
+    out[4] = (mode & S_IWGRP) ? 'w' : '-';
+    out[5] = (mode & S_IXGRP) ? 'x' : '-';
+
+    out[6] = (mode & S_IROTH) ? 'r' : '-';
+    out[7] = (mode & S_IWOTH) ? 'w' : '-';
+    out[8] = (mode & S_IXOTH) ? 'x' : '-';
+
+    out[9] = '\0';
+}

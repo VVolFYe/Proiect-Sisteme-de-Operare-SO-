@@ -71,7 +71,7 @@ void appendReport(const char *reportsPath, Report *r) {
 }
 
 void add(char **args){
-    fprintf(stderr, "<add> FUNCTION\n\n");
+    // fprintf(stderr, "<add> FUNCTION\n\n");
 
     char *district = args[6];
     char *username = args[4];
@@ -100,7 +100,23 @@ void add(char **args){
 }
 
 void list(char **args){
-    fprintf(stderr, "\n!<list> FUNCTION: TO BE IMPLEMENTED!\n");
+    fprintf(stderr, "\n!<list> FUNCTION: ONGOING!\n");
+
+    char *district = args[6];
+    char reportsPath[256];
+    buildReportsPath(reportsPath, sizeof(reportsPath), district);
+
+    if (!fileExists(reportsPath)) {
+        fprintf(stderr, "Path for district [%s] not found\n", district);
+        exit(-1);
+    }
+
+    struct stat st;
+    if (stat(reportsPath, &st) == -1) {
+        perror("stat reports.dat");
+        exit(-1);
+    }
+
 }
 
 void view(char **args){

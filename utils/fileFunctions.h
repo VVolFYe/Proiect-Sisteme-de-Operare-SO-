@@ -12,5 +12,7 @@ void buildReportsPath(char *out, size_t outSize, const char *district);
 void buildConfigPath(char *out, size_t outSize, const char *district);
 void buildLogPath(char *out, size_t outSize, const char *district);
 void checkDistrictExists(const char *district);
+void modeToString(mode_t mode, char *out);
+
 
 #endif
