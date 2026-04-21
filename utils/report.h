@@ -7,15 +7,15 @@
 #define CATEGORY_LEN 32
 #define DESC_LEN 256
 
-typedef struct Report{
+typedef struct {
     int id;
-    char inspector[USER_LEN];
+    char inspector[64];
     double latitude;
     double longitude;
-    char category[CATEGORY_LEN];
+    char category[32];
     int severity;
     time_t timestamp;
-    char description[DESC_LEN];
+    char description[256];
 } Report;
 
 #endif
