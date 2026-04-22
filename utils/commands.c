@@ -138,7 +138,6 @@ void list(char **args){
     int found = 0;
     Report r;
     
-
     while (read(fd, &r, sizeof(Report)) == sizeof(Report)){
         found = 1;
         printf("ID: %d\n", r.id);
@@ -152,7 +151,42 @@ void list(char **args){
 }
 
 void view(char **args){
-    fprintf(stderr, "\n!<view> FUNCTION: TO BE IMPLEMENTED!\n");
+    fprintf(stderr, "<view> FUNCTION: ONGOING\n");
+
+    char *district = args[6];
+    int searchedID = atoi(args[7]);
+
+    char reportsPath[256];
+    buildReportsPath(reportsPath, sizeof(reportsPath), district);
+
+    if (!fileExists(reportsPath)) {
+        fprintf(stderr, "Path for district [%s] not found\n", district);
+        exit(-1);
+    }
+
+
+    int fd = open(reportsPath, O_RDONLY);
+    if (fd == -1){
+        perror(NULL);
+        exit(-1);
+    }
+
+    Report r;
+    int found = 0;
+
+    while (read(fd, &r, sizeof(Report)) == sizeof(Report)){
+
+        if (searchedID == r.id){
+            found = 1;
+            printf("ID: %d\n", r.id);
+            printf("Inspector: %s\n", r.inspector);
+            printf("Category: %s\n", r.category);
+            printf("Severity: %d\n", r.severity);
+            printf("Description: %s\n", r.description);
+        }
+    }
+
+    if (found == 0){fprintf(stderr, "Report with ID [%d] doesn't exist in district [%s]\n", searchedID, district); return;}
 }
 
 void remove_report(char **args){
