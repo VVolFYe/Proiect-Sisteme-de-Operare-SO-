@@ -8,7 +8,7 @@
 #include "commands.h"
 #include "fileFunctions.h"
 #include "report.h"
-
+#include "inputValidation.h"
 
 int getNextReportId(const char *reportsPath) {
     struct stat st;
@@ -190,11 +190,29 @@ void view(char **args){
 }
 
 void remove_report(char **args){
-    fprintf(stderr, "\n!<remove_report> FUNCTION: TO BE IMPLEMENTED!\n");
+    fprintf(stderr, "\n!<remove_report> FUNCTION: ONGOING\n");
+    
+    //kick out if not manager
+    int currentRole = getRole(args);
+    if (currentRole != 1){
+        fprintf(stderr, "Functionality available only for managers. ;)\n");
+        exit(-1);
+    }
+
+
 }
 
 void update_threshold(char **args){
     fprintf(stderr, "\n!<update_threshold> FUNCTION: TO BE IMPLEMENTED!\n");
+
+    //kick out if not manager
+    int currentRole = getRole(args);
+    if (currentRole != 1){
+        fprintf(stderr, "Functionality available only for managers. ;)\n");
+        exit(-1);
+    }
+
+
 }
 
 void filter(char **args){
