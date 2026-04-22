@@ -9,6 +9,7 @@
 #include "fileFunctions.h"
 #include "report.h"
 
+
 int getNextReportId(const char *reportsPath) {
     struct stat st;
 
@@ -48,7 +49,7 @@ void readReportFromKeyboard(Report *r, const char *username, int id) {
 
     printf("Description: ");
     fgets(r->description, DESC_LEN, stdin);
-    r->description[strcspn(r->description, "\n")] = '\0';
+    r->description[strcspn(r->description, "\n")] = '\0'; //eliminate \n with strcpsn
 
     r->timestamp = time(NULL);
 }
@@ -111,11 +112,24 @@ void list(char **args){
         exit(-1);
     }
 
-    struct stat st;
-    if (stat(reportsPath, &st) == -1) {
+    struct stat st_district;
+    if (stat(reportsPath, &st_district) == -1) {
         perror("stat reports.dat");
         exit(-1);
     }
+    
+    printf("Information about reports.dat:\n");
+
+    char perms[10];
+    modeToString(st_district.st_mode, perms);
+    printf("[reports.dat] --> file permissions: [%s]\n", perms);
+
+    uint64_t bytes = st_district.st_size;
+    printf("[reports.dat] --> file size: [%s]\n", humanSize(bytes));
+
+    char date[30];
+    strftime(date, 30, "%d-%m-%y", gmtime(&(st_district.st_mtime)));
+    printf("[reports.dat] --> last date modified: [%s]\n", date);
 
 }
 

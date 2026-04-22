@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 bool fileExists(const char *path);
 bool dirExists(const char *path);
@@ -13,6 +14,7 @@ void buildConfigPath(char *out, size_t outSize, const char *district);
 void buildLogPath(char *out, size_t outSize, const char *district);
 void checkDistrictExists(const char *district);
 void modeToString(mode_t mode, char *out);
+char *humanSize(uint64_t bytes);
 
 
 #endif
