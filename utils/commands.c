@@ -101,8 +101,6 @@ void add(char **args){
 }
 
 void list(char **args){
-    fprintf(stderr, "\n!<list> FUNCTION: ONGOING!\n");
-
     char *district = args[6];
     char reportsPath[256];
     buildReportsPath(reportsPath, sizeof(reportsPath), district);
@@ -131,6 +129,26 @@ void list(char **args){
     strftime(date, 30, "%d-%m-%y", gmtime(&(st_district.st_mtime)));
     printf("[reports.dat] --> last date modified: [%s]\n", date);
 
+    int fd = open(reportsPath, O_RDONLY);
+    if (fd == -1){
+        perror(NULL);
+        exit(-1);
+    }
+
+    int found = 0;
+    Report r;
+    
+
+    while (read(fd, &r, sizeof(Report)) == sizeof(Report)){
+        found = 1;
+        printf("ID: %d\n", r.id);
+        printf("Inspector: %s\n", r.inspector);
+        printf("Category: %s\n", r.category);
+        printf("Severity: %d\n", r.severity);
+        printf("Description: %s\n", r.description);
+    }
+
+    if (found == 0){fprintf(stderr, "No report was found in the [%s] district.\n", district); return;}
 }
 
 void view(char **args){
