@@ -440,7 +440,6 @@ void update_threshold(char **args){
 }
 
 void filter(char **args){
-    fprintf(stderr, "\n!<filter> FUNCTION: ONGOING\n");
 
     char *district = args[6];
 
