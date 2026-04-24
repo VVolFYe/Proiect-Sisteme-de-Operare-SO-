@@ -11,14 +11,23 @@
 #include "inputValidation.h"
 
 int getNextReportId(const char *reportsPath) {
-    struct stat st;
-
-    if (stat(reportsPath, &st) == -1) {
-        perror("stat reports.dat");
+    int fd = open(reportsPath, O_RDONLY);
+    if (fd == -1) {
+        perror("open reports.dat");
         exit(-1);
     }
 
-    return (st.st_size / sizeof(Report)) + 1;
+    Report r;
+    int maxId = 0;
+
+    while (read(fd, &r, sizeof(Report)) == sizeof(Report)) {
+        if (r.id > maxId) {
+            maxId = r.id;
+        }
+    }
+
+    close(fd);
+    return maxId + 1;
 }
 
 void readReportFromKeyboard(Report *r, const char *username, int id) {
@@ -160,7 +169,6 @@ void list(char **args){
 
     close(fd);
 }
-
 void view(char **args){
     fprintf(stderr, "<view> FUNCTION: ONGOING\n");
 
@@ -175,10 +183,9 @@ void view(char **args){
         exit(-1);
     }
 
-
     int fd = open(reportsPath, O_RDONLY);
     if (fd == -1){
-        perror(NULL);
+        perror("open reports.dat");
         exit(-1);
     }
 
@@ -186,31 +193,131 @@ void view(char **args){
     int found = 0;
 
     while (read(fd, &r, sizeof(Report)) == sizeof(Report)){
-
         if (searchedID == r.id){
             found = 1;
             printf("ID: %d\n", r.id);
             printf("Inspector: %s\n", r.inspector);
+            printf("Latitude: %.2lf\n", r.latitude);
+            printf("Longitude: %.2lf\n", r.longitude);
             printf("Category: %s\n", r.category);
             printf("Severity: %d\n", r.severity);
+            printf("Timestamp: %s", ctime(&(r.timestamp)));
             printf("Description: %s\n", r.description);
+            break;
         }
     }
 
-    if (found == 0){fprintf(stderr, "Report with ID [%d] doesn't exist in district [%s]\n", searchedID, district); return;}
+    if (found == 0){
+        fprintf(stderr, "Report with ID [%d] doesn't exist in district [%s]\n", searchedID, district);
+        close(fd);
+        return;
+    }
+
+    close(fd);
 }
 
 void remove_report(char **args){
     fprintf(stderr, "\n!<remove_report> FUNCTION: ONGOING\n");
-    
-    //kick out if not manager
+
     int currentRole = getRole(args);
     if (currentRole != 1){
-        fprintf(stderr, "Functionality available only for managers. ;)\n");
+        fprintf(stderr, "Functionality available only for managers.\n");
         exit(-1);
     }
 
+    char *district = args[6];
+    int searchedID = atoi(args[7]);
 
+    char reportsPath[256];
+    buildReportsPath(reportsPath, sizeof(reportsPath), district);
+
+    if (!fileExists(reportsPath)) {
+        fprintf(stderr, "Path for district [%s] not found\n", district);
+        exit(-1);
+    }
+
+    int fd = open(reportsPath, O_RDWR);
+    if (fd == -1){
+        perror("open reports.dat");
+        exit(-1);
+    }
+
+    Report r;
+    off_t pos = 0;
+    off_t foundPos = -1;
+
+    while (read(fd, &r, sizeof(Report)) == sizeof(Report)){
+        if (r.id == searchedID){
+            foundPos = pos;
+            break;
+        }
+        pos += sizeof(Report);
+    }
+
+    if (foundPos == -1){
+        fprintf(stderr, "Report with ID [%d] doesn't exist in district [%s]\n", searchedID, district);
+        close(fd);
+        return;
+    }
+
+    off_t nextPos = foundPos + sizeof(Report);
+    Report temp;
+
+    while (1){
+        if (lseek(fd, nextPos, SEEK_SET) == -1){
+            perror("lseek read");
+            close(fd);
+            exit(-1);
+        }
+
+        ssize_t bytesRead = read(fd, &temp, sizeof(Report));
+        if (bytesRead == -1){
+            perror("read shift");
+            close(fd);
+            exit(-1);
+        }
+
+        if (bytesRead == 0){
+            break;
+        }
+
+        if (bytesRead != sizeof(Report)){
+            fprintf(stderr, "Corrupted report file.\n");
+            close(fd);
+            exit(-1);
+        }
+
+        if (lseek(fd, nextPos - sizeof(Report), SEEK_SET) == -1){
+            perror("lseek write");
+            close(fd);
+            exit(-1);
+        }
+
+        if (write(fd, &temp, sizeof(Report)) != sizeof(Report)){
+            perror("write shift");
+            close(fd);
+            exit(-1);
+        }
+
+        nextPos += sizeof(Report);
+    }
+
+    struct stat st;
+    if (fstat(fd, &st) == -1){
+        perror("fstat");
+        close(fd);
+        exit(-1);
+    }
+
+    if (ftruncate(fd, st.st_size - sizeof(Report)) == -1){
+        perror("ftruncate");
+        close(fd);
+        exit(-1);
+    }
+
+    close(fd);
+
+    printf("Report with ID [%d] was removed from district [%s].\n", searchedID, district);
 }
 
 void update_threshold(char **args){
