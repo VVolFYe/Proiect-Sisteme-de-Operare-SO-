@@ -14,6 +14,9 @@ void list(char **args);
 void view(char **args);
 void remove_report(char **args);
 void update_threshold(char **args);
+
+int match_condition(Report *r, const char *field, const char *op, const char *value);
+int parse_condition(const char *input, char *field, char *op, char *value);
 void filter(char **args);
 
 

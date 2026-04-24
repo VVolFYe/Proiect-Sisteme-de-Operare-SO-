@@ -80,8 +80,74 @@ void appendReport(const char *reportsPath, Report *r) {
     close(fd);
 }
 
+int parse_condition(const char *input, char *field, char *op, char *value){
+    const char *p1 = strchr(input, ':');
+    if (p1 == NULL) return 0;
+
+    const char *p2 = strchr(p1 + 1, ':');
+    if (p2 == NULL) return 0;
+
+    int fieldLen = p1 - input;
+    int opLen = p2 - (p1 + 1);
+    int valueLen = strlen(p2 + 1);
+
+    if (fieldLen <= 0 || opLen <= 0 || valueLen <= 0) return 0;
+
+    strncpy(field, input, fieldLen);
+    field[fieldLen] = '\0';
+
+    strncpy(op, p1 + 1, opLen);
+    op[opLen] = '\0';
+
+    strcpy(value, p2 + 1);
+
+    return 1;
+}
+
+int match_condition(Report *r, const char *field, const char *op, const char *value){
+    if (strcmp(field, "severity") == 0){
+        int v = atoi(value);
+
+        if (strcmp(op, "==") == 0) return r->severity == v;
+        if (strcmp(op, "!=") == 0) return r->severity != v;
+        if (strcmp(op, "<")  == 0) return r->severity <  v;
+        if (strcmp(op, "<=") == 0) return r->severity <= v;
+        if (strcmp(op, ">")  == 0) return r->severity >  v;
+        if (strcmp(op, ">=") == 0) return r->severity >= v;
+
+        return 0;
+    }
+
+    if (strcmp(field, "category") == 0){
+        if (strcmp(op, "==") == 0) return strcmp(r->category, value) == 0;
+        if (strcmp(op, "!=") == 0) return strcmp(r->category, value) != 0;
+        return 0;
+    }
+
+    if (strcmp(field, "inspector") == 0){
+        if (strcmp(op, "==") == 0) return strcmp(r->inspector, value) == 0;
+        if (strcmp(op, "!=") == 0) return strcmp(r->inspector, value) != 0;
+        return 0;
+    }
+
+    if (strcmp(field, "timestamp") == 0){
+        long long v = atoll(value);
+        long long t = (long long)r->timestamp;
+
+        if (strcmp(op, "==") == 0) return t == v;
+        if (strcmp(op, "!=") == 0) return t != v;
+        if (strcmp(op, "<")  == 0) return t <  v;
+        if (strcmp(op, "<=") == 0) return t <= v;
+        if (strcmp(op, ">")  == 0) return t >  v;
+        if (strcmp(op, ">=") == 0) return t >= v;
+
+        return 0;
+    }
+
+    return 0;
+}
+
 void add(char **args){
-    // fprintf(stderr, "<add> FUNCTION\n\n");
 
     char *district = args[6];
     char *username = args[4];
