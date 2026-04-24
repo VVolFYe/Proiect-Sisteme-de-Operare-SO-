@@ -27,7 +27,7 @@ int getNextReportId(const char *reportsPath) {
     }
 
     close(fd);
-    return maxId + 1;
+    return maxId + 1; //i chose this one because we want to be sure that we don't get the same ID two time ig.
 }
 
 void readReportFromKeyboard(Report *r, const char *username, int id) {
@@ -170,7 +170,6 @@ void list(char **args){
     close(fd);
 }
 void view(char **args){
-    fprintf(stderr, "<view> FUNCTION: ONGOING\n");
 
     char *district = args[6];
     int searchedID = atoi(args[7]);
@@ -217,7 +216,6 @@ void view(char **args){
 }
 
 void remove_report(char **args){
-    fprintf(stderr, "\n!<remove_report> FUNCTION: ONGOING\n");
 
     int currentRole = getRole(args);
     if (currentRole != 1){
@@ -321,16 +319,58 @@ void remove_report(char **args){
 }
 
 void update_threshold(char **args){
-    fprintf(stderr, "\n!<update_threshold> FUNCTION: TO BE IMPLEMENTED!\n");
 
-    //kick out if not manager
     int currentRole = getRole(args);
     if (currentRole != 1){
-        fprintf(stderr, "Functionality available only for managers. ;)\n");
+        fprintf(stderr, "Functionality available only for managers.\n");
         exit(-1);
     }
 
+    char *district = args[6];
+    int newValue = atoi(args[7]);
 
+    if (newValue < 1 || newValue > 3){
+        fprintf(stderr, "Threshold must be between 1 and 3.\n");
+        exit(-1);
+    }
+
+    char cfgPath[256];
+    buildConfigPath(cfgPath, sizeof(cfgPath), district);
+
+    if (!fileExists(cfgPath)) {
+        fprintf(stderr, "Configuration file for district [%s] not found.\n", district);
+        exit(-1);
+    }
+
+    struct stat st;
+    if (stat(cfgPath, &st) == -1){
+        perror("stat district.cfg");
+        exit(-1);
+    }
+
+    if ((st.st_mode & 0777) != 0640){
+        fprintf(stderr, "Refusing to update threshold: district.cfg permissions are [%o], expected [640].\n", st.st_mode & 0777);
+        exit(-1);
+    }
+
+    int fd = open(cfgPath, O_WRONLY | O_TRUNC);
+    if (fd == -1){
+        perror("open district.cfg");
+        exit(-1);
+    }
+
+    char buffer[64];
+    snprintf(buffer, sizeof(buffer), "threshold=%d\n", newValue);
+
+    if (write(fd, buffer, strlen(buffer)) == -1){
+        perror("write district.cfg");
+        close(fd);
+        exit(-1);
+    }
+
+    close(fd);
+
+    printf("Threshold for district [%s] was updated to %d.\n", district, newValue);
 }
 
 void filter(char **args){
