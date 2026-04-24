@@ -15,6 +15,7 @@ void buildLogPath(char *out, size_t outSize, const char *district);
 void checkDistrictExists(const char *district);
 void modeToString(mode_t mode, char *out);
 char *humanSize(uint64_t bytes);
-
+void buildActiveReportsLinkPath(char *out, size_t outSize, const char *district);
+void ensureActiveReportsSymlink(const char *district);
 
 #endif

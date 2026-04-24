@@ -112,6 +112,7 @@ void checkDistrictExists(const char *district) {
     chmod(logPath, 0644);
 
     //here we just checked if they existed already and then created them if needed
+    ensureActiveReportsSymlink(district); //this is to also create the symlink. the
 }
 
 void modeToString(mode_t mode, char *out) {
@@ -147,4 +148,33 @@ char *humanSize(uint64_t bytes)
 	static char output[200];
 	sprintf(output, "%.02lf %s", dblBytes, suffix[i]);
 	return output;
+}
+
+//function for symlink. I just realized that i have to create them.
+void buildActiveReportsLinkPath(char *out, size_t outSize, const char *district) {
+    snprintf(out, outSize, "./active_reports-%s", district);
+}
+
+void ensureActiveReportsSymlink(const char *district) {
+    char reportsPath[256];
+    char linkPath[256];
+
+    buildReportsPath(reportsPath, sizeof(reportsPath), district);
+    buildActiveReportsLinkPath(linkPath, sizeof(linkPath), district);
+
+    struct stat st;
+
+    if (lstat(linkPath, &st) == 0) {
+        if (S_ISLNK(st.st_mode)) {
+            return;
+        } else {
+            fprintf(stderr, "Path [%s] already exists and is not a symbolic link.\n", linkPath);
+            exit(-1);
+        }
+    }
+
+    if (symlink(reportsPath, linkPath) == -1) {
+        perror("symlink active_reports");
+        exit(-1);
+    }
 }
