@@ -440,5 +440,65 @@ void update_threshold(char **args){
 }
 
 void filter(char **args){
-    fprintf(stderr, "\n!<function> FUNCTION: TO BE IMPLEMENTED!\n");
+    fprintf(stderr, "\n!<filter> FUNCTION: ONGOING\n");
+
+    char *district = args[6];
+
+    char reportsPath[256];
+    buildReportsPath(reportsPath, sizeof(reportsPath), district);
+
+    if (!fileExists(reportsPath)) {
+        fprintf(stderr, "Path for district [%s] not found\n", district);
+        exit(-1);
+    }
+
+    int fd = open(reportsPath, O_RDONLY);
+    if (fd == -1){
+        perror("open reports.dat");
+        exit(-1);
+    }
+
+    Report r;
+    int found = 0;
+
+    while (read(fd, &r, sizeof(Report)) == sizeof(Report)){
+        int allMatch = 1;
+
+        //we itterate throught all the condition from commandline arguments
+        for (int i = 7; args[i] != NULL; i++){
+            char field[64], op[16], value[128];
+
+            //we parse them
+            if (!parse_condition(args[i], field, op, value)){
+                fprintf(stderr, "Invalid condition format: [%s]\n", args[i]);
+                close(fd);
+                exit(-1);
+            }
+
+            //if any of them from each report doesnt match the conditions we set allMatch to false
+            if (!match_condition(&r, field, op, value)){
+                allMatch = 0;
+                break;
+            }
+        }
+
+        if (allMatch){
+            found = 1;
+            printf("\n-----------------------------\n");
+            printf("ID: %d\n", r.id);
+            printf("Inspector: %s\n", r.inspector);
+            printf("Latitude: %.2lf\n", r.latitude);
+            printf("Longitude: %.2lf\n", r.longitude);
+            printf("Category: %s\n", r.category);
+            printf("Severity: %d\n", r.severity);
+            printf("Timestamp: %s", ctime(&(r.timestamp)));
+            printf("Description: %s\n", r.description);
+        }
+    }
+
+    if (!found){
+        fprintf(stderr, "No matching reports found in district [%s]\n", district);
+    }
+
+    close(fd);
 }
