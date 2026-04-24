@@ -125,13 +125,13 @@ void list(char **args){
     uint64_t bytes = st_district.st_size;
     printf("[reports.dat] --> file size: [%s]\n", humanSize(bytes));
 
-    char date[30];
-    strftime(date, 30, "%d-%m-%y", gmtime(&(st_district.st_mtime)));
+    char date[64];
+    strftime(date, sizeof(date), "%d-%m-%Y %H:%M:%S", localtime(&(st_district.st_mtime)));
     printf("[reports.dat] --> last date modified: [%s]\n", date);
 
     int fd = open(reportsPath, O_RDONLY);
     if (fd == -1){
-        perror(NULL);
+        perror("open reports.dat");
         exit(-1);
     }
 
@@ -140,14 +140,25 @@ void list(char **args){
     
     while (read(fd, &r, sizeof(Report)) == sizeof(Report)){
         found = 1;
+
+        printf("\n-----------------------------\n");
         printf("ID: %d\n", r.id);
         printf("Inspector: %s\n", r.inspector);
+        printf("Latitude: %.2lf\n", r.latitude);
+        printf("Longitude: %.2lf\n", r.longitude);
         printf("Category: %s\n", r.category);
         printf("Severity: %d\n", r.severity);
+        printf("Timestamp: %s", ctime(&(r.timestamp)));
         printf("Description: %s\n", r.description);
     }
 
-    if (found == 0){fprintf(stderr, "No report was found in the [%s] district.\n", district); return;}
+    if (found == 0){
+        fprintf(stderr, "No report was found in the [%s] district.\n", district);
+        close(fd);
+        return;
+    }
+
+    close(fd);
 }
 
 void view(char **args){
