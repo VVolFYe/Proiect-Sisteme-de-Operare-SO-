@@ -17,5 +17,6 @@ void modeToString(mode_t mode, char *out);
 char *humanSize(uint64_t bytes);
 void buildActiveReportsLinkPath(char *out, size_t outSize, const char *district);
 void ensureActiveReportsSymlink(const char *district);
+void logAction(const char *district, const char *role, const char *user, const char *action);
 
 #endif

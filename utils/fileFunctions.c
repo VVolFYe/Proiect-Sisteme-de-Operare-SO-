@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <time.h>
 #include "fileFunctions.h"
 
 bool fileExists(const char *path) {
@@ -177,4 +178,20 @@ void ensureActiveReportsSymlink(const char *district) {
         perror("symlink active_reports");
         exit(-1);
     }
+}
+
+void logAction(const char *district, const char *role, const char *user, const char *action){
+    char logPath[256];
+    buildLogPath(logPath, sizeof(logPath), district);
+
+    time_t now = time(NULL);
+    char date[64];
+    strftime(date, sizeof(date), "%d-%m-%Y %H:%M:%S", localtime(&now));
+
+    char line[512];
+    snprintf(line, sizeof(line), "[%s] role=%s user=%s action=%s\n", date, role, user, action);
+
+    printf("LOGGING: %s %s %s %s\n", district, role, user, action); //for debugging
+    printf("LOG PATH: %s\n", logPath);
+    appendToFile(logPath, line);
 }

@@ -173,6 +173,7 @@ void add(char **args){
     appendReport(reportsPath, &r);
 
     printf("Report added successfully with ID %d.\n", id);
+    logAction(district, args[2], args[4], "add");
 }
 
 void list(char **args){
@@ -233,6 +234,7 @@ void list(char **args){
         return;
     }
 
+    logAction(district, args[2], args[4], "list");
     close(fd);
 }
 void view(char **args){
@@ -278,6 +280,7 @@ void view(char **args){
         return;
     }
 
+    logAction(district, args[2], args[4], "view");
     close(fd);
 }
 
@@ -382,6 +385,7 @@ void remove_report(char **args){
     close(fd);
 
     printf("Report with ID [%d] was removed from district [%s].\n", searchedID, district);
+    logAction(district, args[2], args[4], "remove_report");
 }
 
 void update_threshold(char **args){
@@ -437,6 +441,7 @@ void update_threshold(char **args){
     close(fd);
 
     printf("Threshold for district [%s] was updated to %d.\n", district, newValue);
+    logAction(district, args[2], args[4], "update_threshold");
 }
 
 void filter(char **args){
@@ -499,5 +504,6 @@ void filter(char **args){
         fprintf(stderr, "No matching reports found in district [%s]\n", district);
     }
 
+    logAction(district, args[2], args[4], "filter");
     close(fd);
 }
