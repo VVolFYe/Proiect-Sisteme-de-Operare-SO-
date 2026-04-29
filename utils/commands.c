@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <time.h>
 #include "commands.h"
 #include "fileFunctions.h"
@@ -510,4 +511,28 @@ void filter(char **args){
 
 void remove_district(char **args){
     fprintf(stderr, "remove_district function: Work in Progress.\n");
+    char *district = args[6];
+    // printf("%s\n", district);
+
+    char districtPath[256];
+    buildDistrictPath(districtPath, sizeof(districtPath), district);
+    // printf("\n%s\n", districtPath);
+
+    char symLinkPath[256];
+    buildActiveReportsLinkPath(symLinkPath, sizeof(symLinkPath), district);
+    printf("\n%s\n", symLinkPath);
+
+    pid_t pid = fork();
+    if (pid == 0){
+        // exec
+    }
+    else if (pid == -1){
+        //error:
+        fprintf(stderr, "Error in fork in remove_district function. womp womp\n");
+        exit(-1);
+    }
+    else{
+        //wait for child
+        waitpid(pid, NULL, 0);
+    }
 }
