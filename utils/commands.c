@@ -520,8 +520,15 @@ void remove_district(char **args){
 
     char symLinkPath[256];
     buildActiveReportsLinkPath(symLinkPath, sizeof(symLinkPath), district);
-    symLinkPath[strlen(symLinkPath) - 1] = '\0'; //asta e o romaneasca facuta sa sterg slashu de la final. merge. sper sa schimb asta pe viitor
-    printf("\n%s\n", symLinkPath);
+
+    if (symLinkPath[strlen(symLinkPath) - 1] == '/'){
+        symLinkPath[strlen(symLinkPath) - 1] = '\0'; //asta e o romaneasca facuta sa sterg slashu de la final (daca e). merge. sper sa schimb asta pe viitor
+    }
+
+    // ca sa nu avem surprize cu ../ pun si eu din astea
+    if (strchr(districtPath, '.') != NULL){fprintf(stderr, "DistrictName cannot contain '.'"); exit(-1);}
+    if (strchr(districtPath, '/') != NULL){fprintf(stderr, "DistrictName cannot contain '/'"); exit(-1);}
+    // printf("\n%s\n", symLinkPath);
 
     char *rmArguments[4] = {"rm", "-rf", districtPath, 0};
 
