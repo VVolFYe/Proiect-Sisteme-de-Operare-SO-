@@ -33,7 +33,9 @@ void selectCommand(char **args){
         case 6:
             filter(args);
             break;
-
+        case 7:
+            remove_district(args);
+            break;
         default:
         fprintf(stderr, "Unknown Command. Exiting...\n");
         exit(-1);

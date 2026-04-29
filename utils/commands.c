@@ -507,3 +507,7 @@ void filter(char **args){
     logAction(district, args[2], args[4], "filter");
     close(fd);
 }
+
+void remove_district(char **args){
+    fprintf(stderr, "remove_district function: Work in Progress.\n");
+}

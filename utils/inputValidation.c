@@ -68,6 +68,7 @@ void displayRole(char **args){
     remove_report = 4 
     update_threshold = 5 
     filter = 6
+    remove_district = 7
 */
 int commandSelector(char **args){
     if ((strcmp(args[5], "--add") == 0) || (strcmp(args[5], "add") == 0)){
@@ -87,6 +88,9 @@ int commandSelector(char **args){
     }
     if ((strcmp(args[5], "--filter") == 0) || (strcmp(args[5], "filter") == 0)){
         return 6;
+    }
+    if ((strcmp(args[5], "--remove_district") == 0) || (strcmp(args[5], "remove_district") == 0)){
+        return 7;
     }
     return -1;
 }
