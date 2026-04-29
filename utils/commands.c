@@ -520,11 +520,15 @@ void remove_district(char **args){
 
     char symLinkPath[256];
     buildActiveReportsLinkPath(symLinkPath, sizeof(symLinkPath), district);
+    symLinkPath[strlen(symLinkPath) - 1] = '\0'; //asta e o romaneasca facuta sa sterg slashu de la final. merge. sper sa schimb asta pe viitor
     printf("\n%s\n", symLinkPath);
+
+    char *rmArguments[4] = {"rm", "-rf", districtPath, 0};
 
     pid_t pid = fork();
     if (pid == 0){
-        // exec
+        unlink(symLinkPath);
+        execvp("rm", rmArguments);
     }
     else if (pid == -1){
         //error:
