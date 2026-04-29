@@ -11,9 +11,10 @@ Current stage: Phase 1 completed.
 
 Commands that I used to test:
 
-- ./p --role manager --user userIdk --add First
-- ./p --role inspector --user userIdk --list First
-- ./p --role inspector --user userIdk --view First 1
-- ./p --role manager --user userIdk --remove_report First 1
-- ./p --role manager --user userIdk --update_threshold First 2
-- ./p --role inspector --user userIdk --filter First "severity:>=:2" "category:==:road"
+- ./city_manager --role manager --user userIdk --add <<districtName>>
+- ./city_manager --role inspector --user userIdk --list <<districtName>>
+- ./city_manager --role inspector --user userIdk --view <<districtName>> 1
+- ./city_manager --role manager --user userIdk --remove_report <<districtName>> 1
+- ./city_manager --role manager --user userIdk --update_threshold <<districtName>> 2
+- ./city_manager --role inspector --user userIdk --filter <<districtName>> "severity:>=:2" "category:==:road"
+- ./city_manager --role inspector --user userIdk --remove_district <<districtName>>
