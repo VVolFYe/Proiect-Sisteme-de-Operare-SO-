@@ -9,7 +9,7 @@ Current stage: Phase 1 completed.
 
 - How to run: ./city_manager --role <manager|inspector> --user <username> <command> <district> [extra_arguments]
 
-Commands that I used to test:
+Commands for testing:
 
 - ./city_manager --role manager --user userIdk --add "districtName"
 - ./city_manager --role inspector --user userIdk --list "districtName"
