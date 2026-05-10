@@ -1,13 +1,13 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
+#include <stddef.h>
 #include "report.h"
 
 //utils for those
 int getNextReportId(const char *reportsPath);
 void readReportFromKeyboard(Report *r, const char *username, int id);
 void appendReport(const char *reportsPath, Report *r);
-
 
 void add(char **args);
 void list(char **args);
@@ -20,5 +20,6 @@ int match_condition(Report *r, const char *field, const char *op, const char *va
 int parse_condition(const char *input, char *field, char *op, char *value);
 void filter(char **args);
 
+int notify_monitor(char *message, int messageSize);
 
 #endif

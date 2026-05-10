@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <signal.h>
+#include <errno.h>
 #include <time.h>
 #include "commands.h"
 #include "fileFunctions.h"
@@ -170,11 +172,16 @@ void add(char **args){
     memset(&r, 0, sizeof(Report));
 
     readReportFromKeyboard(&r, username, id);
-
     appendReport(reportsPath, &r);
 
+    char monitorMessage[256];
+    notify_monitor(monitorMessage, sizeof(monitorMessage));
+
     printf("Report added successfully with ID %d.\n", id);
+    printf("%s", monitorMessage);
+
     logAction(district, args[2], args[4], "add");
+    logAction(district, args[2], args[4], monitorMessage);
 }
 
 void list(char **args){
@@ -510,7 +517,11 @@ void filter(char **args){
 }
 
 void remove_district(char **args){
-    fprintf(stderr, "remove_district function: Work in Progress.\n");
+    int currentRole = getRole(args);
+    if (currentRole != 1){
+        fprintf(stderr, "Functionality available only for managers.\n");
+        exit(-1);
+    }
     char *district = args[6];
     // printf("%s\n", district);
 
@@ -525,10 +536,12 @@ void remove_district(char **args){
         symLinkPath[strlen(symLinkPath) - 1] = '\0'; //asta e o romaneasca facuta sa sterg slashu de la final (daca e). merge. sper sa schimb asta pe viitor
     }
 
-    // ca sa nu avem surprize cu ../ pun si eu din astea
-    if (strchr(districtPath, '.') != NULL){fprintf(stderr, "DistrictName cannot contain '.'"); exit(-1);}
-    if (strchr(districtPath, '/') != NULL){fprintf(stderr, "DistrictName cannot contain '/'"); exit(-1);}
-    // printf("\n%s\n", symLinkPath);
+    if (strchr(district, '/') != NULL){
+        fprintf(stderr, "DistrictName cannot contain '/'\n");
+        exit(-1);
+    }
+
+    // printf("\n%s\n", symLinkPath); //debug
 
     char *rmArguments[4] = {"rm", "-rf", districtPath, 0};
 
@@ -546,4 +559,43 @@ void remove_district(char **args){
         //wait for child
         waitpid(pid, NULL, 0);
     }
+}
+
+int notify_monitor(char *message, int messageSize) {
+    int fd;
+    char buffer[64];
+    int bytesRead;
+    int pid;
+
+    fd = open(".monitor_pid", O_RDONLY);
+
+    if (fd == -1) {
+        snprintf(message, messageSize, "Monitor could not be informed: .monitor_pid file not found.\n");
+        return 0;
+    }
+
+    bytesRead = read(fd, buffer, sizeof(buffer) - 1);
+    close(fd);
+
+    if (bytesRead <= 0) {
+        snprintf(message, messageSize, "Monitor could not be informed: could not read PID.\n");
+        return 0;
+    }
+
+    buffer[bytesRead] = '\0';
+    pid = atoi(buffer);
+
+    if (pid <= 0) {
+        snprintf(message, messageSize, "Monitor could not be informed: invalid PID.\n");
+        return 0;
+    }
+
+    if (kill(pid, SIGUSR1) == -1) {
+        snprintf(message, messageSize, "Monitor could not be informed: signal could not be sent.\n");
+        return 0;
+    }
+
+    snprintf(message, messageSize, "Monitor was informed about the new report.\n");
+
+    return 1;
 }
