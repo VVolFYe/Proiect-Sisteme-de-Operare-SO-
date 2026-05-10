@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gcc -Wall -o p monitor_reports.c
+gcc -Wall -Wextra -o monitor_reports monitor_reports.c
