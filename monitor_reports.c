@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <signal.h>
+#include <errno.h>
 
 
 volatile sig_atomic_t isAlive = 1;
@@ -24,6 +25,14 @@ void handleSIGUSR1(int sig){
 }
 
 void initialize(){
+    int oldFd = open(".monitor_pid", O_RDONLY);
+
+    if (oldFd != -1) {
+        char msg[] = "monitor_reports: already running.\n";
+        write(STDOUT_FILENO, msg, sizeof(msg) - 1);
+        exit(-1);
+    }
+
     pid_t monitorPid = getpid();
     char pid[128];
     snprintf(pid, sizeof(pid), "%d\n", monitorPid);
@@ -45,6 +54,7 @@ void end() {
     printf("monitor_pid killed.\n");
 }
 
+
 //handler from stackoverflow
 static void pSigHandler(int signo){
     switch (signo) {
@@ -61,7 +71,10 @@ static void pSigHandler(int signo){
     }
 }
 
+
 int main(void){
+    initialize();
+
     fprintf(stderr, "monitor_reports: Ongoing.\n");
 
     struct sigaction psa;
@@ -81,7 +94,6 @@ int main(void){
         exit(EXIT_FAILURE);
     }
 
-    initialize();
     while (isAlive == 1){
         pause();
     }
