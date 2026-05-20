@@ -11,20 +11,24 @@
 
 void scorer(char *districtName){
     printf("scorer function to be implemented [%s].\n", districtName);
-
-
-
+    char command[256];
+    snprintf(command, sizeof(command), "./scorer.sh %s", districtName);
+    execlp("./scorer.sh", "./scorer.sh", districtName, NULL);
 }
 
 void calculate_scores(int argc, char *args[]){
+    
+    
     for(int i = 1; i < argc; i++){
-
         int pipefd[2];
         if (pipe(pipefd) == -1) {
             perror("pipe");
             exit(-1);
         }
 
+        close(pipefd[0]);
+        dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[1]);
 
         scorer(args[i]);
     }
