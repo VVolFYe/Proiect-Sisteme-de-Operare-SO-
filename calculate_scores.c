@@ -11,8 +11,8 @@
 
 void scorer(char *districtName){
     printf("scorer function to be implemented [%s].\n", districtName);
-    char command[256];
-    snprintf(command, sizeof(command), "./scorer.sh %s", districtName);
+    // char command[256];
+    // snprintf(command, sizeof(command), "./scorer.sh %s", districtName);
     execlp("./scorer.sh", "./scorer.sh", districtName, NULL);
 }
 
