@@ -22,4 +22,9 @@ Regarding the remove_district function I did not use AI at all because I made it
 
 # AI Usage (Third phase)
 
-Ongoing..
+For the third phase I used it to understand the way it should work. Initially, I thought I could use a shell script that calls city manager with the list function, then grep to see the inspector and the severity level. This was too complicated so I asked a bit about how those could be connected.
+
+After understanding it, I decided to create a calculate_scores.c file that is called in city manager and started creating it myself.
+
+I also used it a little when I parsed the arguments because it didn't seem to work properly.
+When it was done I asked it for test inputs that may cause problems.

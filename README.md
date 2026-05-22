@@ -1,7 +1,7 @@
 # Proiect-Sisteme-de-Operare-SO-
 Proiect Sisteme de Operare, semestrul 2, anul 2, Boscu Tudor
 
-Current stage: Phase 1 completed. 
+Current stage: All phases completed
 
 # How to use:
 
