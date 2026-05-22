@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 
+
 volatile sig_atomic_t keep_alive = 1;
 
 static void handle_monitor_line(const char *line, int *ended) {
@@ -92,14 +93,123 @@ void start_monitor() {
 
     close(pipefd[0]);
     close(pipefd[1]);
-    signal(SIGCHLD, SIG_IGN);
+    // signal(SIGCHLD, SIG_IGN); //not needed anymore
+}
+
+//spargem linia in argumente
+int split_command(char *line, char *args[]) {
+    int count = 0;
+
+    char *p = strtok(line, " \n\t");
+
+    while (p != NULL && count < 31) {
+        args[count] = p;
+        count++;
+        p = strtok(NULL, " \n\t");
+    }
+
+    args[count] = NULL; //punem ultimul pe null
+
+    return count;
+}
+
+void calculate_scores_command(int count, char *districts[]) {
+    if (count == 0) {
+        printf("Calculate scores calculates commands for the districts received in arguments. There are not any.\n\n");
+        return;
+    }
+
+    for (int i = 0; i < count; i++) {
+        int pipefd[2];
+
+        if (pipe(pipefd) == -1) {
+            perror("pipe");
+            continue;
+        }
+
+        pid_t pid = fork();
+
+        if (pid == -1) {
+            perror("fork");
+            close(pipefd[0]);
+            close(pipefd[1]);
+            continue;
+        }
+
+        if (pid == 0) {
+            close(pipefd[0]);
+
+            if (dup2(pipefd[1], STDOUT_FILENO) == -1) {
+                perror("dup2");
+                exit(-1);
+            }
+
+            close(pipefd[1]);
+
+            execlp("./calculate_scores", "./calculate_scores", districts[i], NULL);
+
+            fprintf(stderr, "execlp error.\n");
+            exit(-1);
+        }
+
+        close(pipefd[1]);
+
+        printf("\nScore for district %s: \n", districts[i]);
+
+        char buffer[256];
+        ssize_t bytesRead;
+
+        while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer) - 1)) > 0) {
+            buffer[bytesRead] = '\0';
+            printf("%s", buffer);
+        }
+
+        close(pipefd[0]);
+        waitpid(pid, NULL, 0);
+    }
+    
 }
 
 int main() {
-    start_monitor();
+    char line[512]; //line buffer
+    char *args[32]; //arguments to be read from user input
 
-    while (keep_alive) {
-        sleep(1);
+    printf("city_hub started.\n");
+
+    while (1) {
+        printf("city_hub: "); //1st part of prompt
+        printf("Enter command. Options:\n"); //2nd part of prompt
+        printf("\t-start_monitor\n");
+        printf("\t-calculate_scores <districts>\n");
+        printf("\t-exit\n");
+        printf("> "); //3rd part of prompt
+        fflush(stdout);
+
+        if (fgets(line, sizeof(line), stdin) == NULL) {
+            break;
+        }
+
+        int argc = split_command(line, args);
+
+        if (argc == 0) {
+            continue;
+        }
+
+        //now whe check
+        if (strcmp(args[0], "start_monitor") == 0) { 
+            start_monitor();
+        }
+        else if (strcmp(args[0], "calculate_scores") == 0) {
+            calculate_scores_command(argc - 1, &args[1]);
+        }
+        else if (strcmp(args[0], "exit") == 0) {
+            break;
+        }
+        else {
+            printf("Unknown command: %s\n", args[0]);
+        }
+
+        while (waitpid(-1, NULL, WNOHANG) > 0) {}
     }
 
     return 0;
