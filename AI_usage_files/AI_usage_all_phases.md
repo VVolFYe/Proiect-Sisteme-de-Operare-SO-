@@ -28,3 +28,5 @@ After understanding it, I decided to create a calculate_scores.c file that is ca
 
 I also used it a little when I parsed the arguments because it didn't seem to work properly.
 When it was done I asked it for test inputs that may cause problems.
+
+Also I want to update the README.md file to have it nice on GitHub so I will ask AI to make it better because I want it to be clean and I want it to look nice.
