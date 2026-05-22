@@ -154,7 +154,7 @@ void calculate_scores_command(int count, char *districts[]) {
 
         close(pipefd[1]);
 
-        printf("\nScore for district %s: \n", districts[i]);
+        printf("\n[district: %s]\n", districts[i]);
 
         char buffer[256];
         ssize_t bytesRead;
@@ -170,19 +170,24 @@ void calculate_scores_command(int count, char *districts[]) {
     
 }
 
+//asta nu e necesara dar daca tot am terminat. 
+void print_help() {
+    printf("\nAvailable commands:\n");
+    printf("\t-start_monitor\n");
+    printf("\t-calculate_scores <district1> <district2> ...\n");
+    printf("\t-help\n");
+    printf("\t-exit\n\n");
+}
+
 int main() {
     char line[512]; //line buffer
     char *args[32]; //arguments to be read from user input
 
     printf("city_hub started.\n");
+    print_help(); //ca sa printam doar la inceput nu la fiecare comanda.
 
     while (1) {
-        printf("city_hub: "); //1st part of prompt
-        printf("Enter command. Options:\n"); //2nd part of prompt
-        printf("\t-start_monitor\n");
-        printf("\t-calculate_scores <districts>\n");
-        printf("\t-exit\n");
-        printf("> "); //3rd part of prompt
+        printf("city_hub> ");
         fflush(stdout);
 
         if (fgets(line, sizeof(line), stdin) == NULL) {
@@ -195,21 +200,27 @@ int main() {
             continue;
         }
 
-        //now whe check
-        if (strcmp(args[0], "start_monitor") == 0) { 
+        if (strcmp(args[0], "start_monitor") == 0) {
             start_monitor();
         }
         else if (strcmp(args[0], "calculate_scores") == 0) {
             calculate_scores_command(argc - 1, &args[1]);
         }
+        else if (strcmp(args[0], "help") == 0) {
+            print_help();
+        }
         else if (strcmp(args[0], "exit") == 0) {
+            printf("Exiting city_hub.\n");
+            sleep(1); //ca sa fie mai fancy :)
             break;
         }
         else {
             printf("Unknown command: %s\n", args[0]);
+            printf("Type 'help' to see available commands.\n");
         }
 
-        while (waitpid(-1, NULL, WNOHANG) > 0) {}
+        while (waitpid(-1, NULL, WNOHANG) > 0) {
+        }
     }
 
     return 0;

@@ -66,15 +66,13 @@ int main(int argc, char *argv[]) {
 
     close(fd);
 
-    printf("District: %s\n", district);
-
     if (count == 0) {
         printf("no reports found\n");
         return 0;
     }
 
     for (int i = 0; i < count; i++) {
-        printf("inspector=%s;score=%d\n", scores[i].inspector, scores[i].score);
+        printf("inspector= %s -> score= %d\n", scores[i].inspector, scores[i].score);
     }
 
 
