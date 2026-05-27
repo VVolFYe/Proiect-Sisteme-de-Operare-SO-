@@ -13,14 +13,17 @@ volatile sig_atomic_t isAlive = 1;
 void handleSIGINT(int sig){
     (void)sig; //era cv warning la un moment dat daca puneam asa se oprea
     isAlive = 0;
-    char msg[] = "monitor_reports: Received SIGINT. Exiting...\n";
+
+    char msg[] = "DONE: monitor_reports received SIGINT. Exiting.\n";
+
     write(STDOUT_FILENO, msg, sizeof(msg) - 1);
 }
 
 //handle for sigusr when creating a file 
 void handleSIGUSR1(int sig){
     (void)sig;
-    char msg[] = "monitor_reports: Received SIGUSR1. A new report has been added.\n";
+    char msg[] = "INFO: A new report has been added.\n";
+
     write(STDOUT_FILENO, msg, sizeof(msg) - 1);
 }
 
@@ -28,10 +31,23 @@ void initialize(){
     int oldFd = open(".monitor_pid", O_RDONLY);
 
     if (oldFd != -1) {
-        char msg[] = "monitor_reports: already running.\n";
-        write(STDOUT_FILENO, msg, sizeof(msg) - 1);
+        char existingPid[64];
+        ssize_t n = read(oldFd, existingPid, sizeof(existingPid) - 1);
+        close(oldFd);
+
+        if (n > 0) {
+            existingPid[n] = '\0';
+            char msg[128];
+            snprintf(msg, sizeof(msg), "ERROR: monitor already running with PID %s", existingPid);
+            write(STDOUT_FILENO, msg, strlen(msg));
+        } else {
+            char msg[] = "ERROR: monitor already running, but PID could not be read.\n";
+            write(STDOUT_FILENO, msg, sizeof(msg) - 1);
+        }
+
         exit(-1);
     }
+
 
     pid_t monitorPid = getpid();
     char pid[128];
@@ -51,7 +67,9 @@ void end() {
         fprintf(stderr, "failed to unlink.\n");
         exit(-1);
     }
-    printf("monitor_pid killed.\n");
+
+    char msg[] = "DONE: monitor_pid file removed.\n";
+    write(STDOUT_FILENO, msg, sizeof(msg) - 1);
 }
 
 
